@@ -20,7 +20,7 @@ class PLAYER(object):
         return self._ip
 
     def check(self, index):
-        return self._Hand[int(index)].is_show
+        return self._Hand[index].is_show
 
     def add(self, card):
         self._Hand.append(card)
@@ -44,13 +44,13 @@ class PLAYER(object):
         if (is_self == 0):
             for i in self._Hand:
                 if (i.is_show == 1):
-                    cards += i.color + "-" + str(i.number) + "-"
+                    cards += i.color + " " + i.number + " "
                 else:
                     cards += i.color
             return cards
         else:
             for i in self._Hand:
-                cards += i.color + "-" + str(i.number) + "-" 
+                cards += i.color + " " + i.number + " "
             return cards
 
 
