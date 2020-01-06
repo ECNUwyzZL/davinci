@@ -105,5 +105,16 @@ def end_check():
             break
     return str(temp)
 
+@app.route('/show_my', methods=['get'])
+def show_my():
+    get_data = request.args.to_dict()
+    name = get_data.get('name')
+    res = ""
+    for i in players:
+        if i.name == name:
+            for j in i.Hand:
+                res = res + j.color + str(j.number)
+    return res
+
 if __name__ == '__main__':
     app.run()
