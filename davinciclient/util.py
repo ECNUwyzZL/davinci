@@ -23,7 +23,7 @@ def get_card(name):
     print('your card is ' + card['color'] + ":" + str(card['number']))
     data = {'name': name}
     req = requests.get(SERVER_IP+'show_my', params=data)
-    print('your cards list is now ' + req.text)
+    print('your cards list is now\n' + req.text)
     return card['now_index']
 def guess(name,step1):
     data = {'name': name}
@@ -32,7 +32,7 @@ def guess(name,step1):
     print("your racer is " + racer)
     data = {'name': name}
     req = requests.get(SERVER_IP+'show_racer',params=data)
-    print("your racer cards are " + req.text)
+    print("your racer cards are\n" + req.text)
     index = input("please choose the index of card you want to guess\n")
     number = input("please choose a number you guess\n")
     data = {'attacker': name, 'defender': racer, 'index': index, 'number': number, 'now_index': step1}
@@ -42,6 +42,20 @@ def guess(name,step1):
     print("defender cards\n" + res['defender'])
     data = {'name': name}
     req = requests.get(SERVER_IP+'show_my', params=data)
-    print('your cards list is now ' + req.text)
+    print('your cards list is now\n' + req.text)
     return res['guess_result']
+def racer_guess(name):
+    req = requests.get(SERVER_IP+'racer_guess_res')
+    if req.text == '0':
+        return '0'
+    else:
+        res = json.loads(req.text)
+        print('your racer guess result is '+res['res'])
+        print('your racer guess number is '+res['guess_number'])
+        print('your racer guess color is '+res['guess_color'])
+        data = {'name': name}
+        req = requests.get(SERVER_IP + 'show_racer', params=data)
+        print("your racer cards are\n" + req.text)
+        print('your racer latest card index is '+res['get_card'])
+        return '1'
 

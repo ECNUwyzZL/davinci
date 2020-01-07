@@ -12,7 +12,8 @@ white = list(range(12))
 random.shuffle(white)
 players = []
 now_turn = ""
-
+racer_guess = {}
+status = 0
 def init():
     global black
     global white
@@ -78,6 +79,9 @@ def racer():
 
 @app.route('/guess', methods=['get'])
 def guess():
+    global racer_guess
+    global status
+    status = 0
     get_data = request.args.to_dict()
     attacker = get_data.get('attacker')
     index = get_data.get('index')
@@ -94,19 +98,27 @@ def guess():
             if (i.attacked(index, number) == 1):
                 i.Hand[int(index)].is_show = 1
                 guess_result = 'yes'
+                racer_guess['res'] = 'yes'
+                racer_guess['guess_number'] = number
+                racer_guess['guess_color'] = i.Hand[int(index)].color
+                racer_guess['get_card'] = now_index
             else:
                 guess_result = 'no'
+                racer_guess['res'] = 'no'
+                racer_guess['guess_number'] = number
+                racer_guess['guess_color'] = i.Hand[int(index)].color
+                racer_guess['get_card'] = now_index
             defender_cards = i.show(0)
     for i in players:
         if (attacker == i.name):
             if (guess_result == 'no'):
                 i.Hand[int(now_index)].is_show = 1
             attacker_cards = i.show(1)
-
     res_dict = {}
     res_dict['guess_result'] = guess_result
     res_dict['defender'] = defender_cards
     res_dict['self'] = attacker_cards
+    status = 1
     return json.dumps(res_dict)
 
 @app.route('/start', methods=['get'])
@@ -134,10 +146,10 @@ def show_two():
 
 @app.route('/end_check', methods=['get'])
 def end_check():
-    temp = 1
+    temp = 0
     for i in players:
-        if not i.end_check():
-            temp = 0
+        if i.end_check():
+            temp = 1
             break
     if (temp == 1):
         init()
@@ -178,7 +190,14 @@ def turn():
     global now_turn
     #print(now_turn)
     return now_turn
-
+@app.route('/racer_guess_res', methods=['get'])
+def racer_guess_res():
+    global racer_guess
+    global status
+    if status == 0:
+        return '0'
+    else:
+        return json.dumps(racer_guess)
 @app.route('/change_turn', methods=['get'])
 def change_turn():
     global now_turn
@@ -187,8 +206,9 @@ def change_turn():
     for i in players:
         if i.name!=name:
             now_turn = i.name
+            status = 0
             break
     return "changed"
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run()

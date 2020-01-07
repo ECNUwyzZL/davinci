@@ -40,5 +40,10 @@ while (1):
                                 temp = 1
                             else:
                                 step2 = guess(name, step1)
+                        if (check_end()=='1'):
+                            print("you win!!")
+                    else:
+                        racer_res = racer_guess(name)
+
 
 
